@@ -2,19 +2,21 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { orderConfirm } from "../features/order/orderSlice";
 import "./OrderButton.css";
+import { useNavigate } from "react-router-dom";
+import { resetBurger } from "../features/order/orderSlice";
 
 function OrderButton(props) {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { baconCount, saladCount, meatCount, cheeseCount, price, resetBurger } =
+  const { baconCount, saladCount, meatCount, cheeseCount, price } =
     props.btnprop;
   const { isAuthenticated } = useSelector((state) => state.auth);
   const [showModal, setShowModal] = useState(false);
   const [showModal2, setShowModal2] = useState(false);
   const handleclick = () => {
-    setShowModal(true);
+    !isAuthenticated ? navigate("./auth") : setShowModal(true);
   };
   const handleContinue = () => {
-    console.log("hello  ");
     setShowModal(false);
     setShowModal2(true);
   };
@@ -22,9 +24,8 @@ function OrderButton(props) {
     dispatch(
       orderConfirm({ baconCount, saladCount, meatCount, cheeseCount, price })
     );
-
     setShowModal2(false);
-    resetBurger();
+    dispatch(resetBurger());
   };
 
   return (
@@ -32,12 +33,11 @@ function OrderButton(props) {
       <div>
         <button
           onClick={() => handleclick()}
-          disabled={!isAuthenticated}
           style={{
             color: !isAuthenticated ? "#888888" : "#000000",
             backgroundColor: !isAuthenticated ? "#c7c6c6" : "#dad735",
             padding: 20,
-            cursor: !isAuthenticated ? "not-allowed" : "pointer",
+            cursor: "pointer",
           }}
           type="button"
         >
@@ -54,7 +54,7 @@ function OrderButton(props) {
                 <li>Salad: {saladCount}</li>
                 <li>Cheese: {cheeseCount}</li>
               </div>
-              <h4>Total Price: {price.toFixed(2)}</h4>
+              <h4>Total Price: {price}</h4>
               <p>Continue to Checkout?</p>
               <button className="btns" onClick={() => setShowModal(false)}>
                 <strong style={{ color: " #944317", fontSize: 17 }}>
@@ -78,7 +78,7 @@ function OrderButton(props) {
                 <input type="text" placeholder="Address"></input>
                 <input type="text" placeholder="Country"></input>
               </div>
-              <h4>Total Price: {price.toFixed(2)}</h4>
+              <h4>Total Price: {price}</h4>
               <button className="btns2" onClick={orderConfirmed}>
                 <strong style={{ color: "#5c9210", fontSize: 17 }}>
                   Order

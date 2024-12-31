@@ -10,15 +10,10 @@ function Orders() {
 
   const handleDel = (index) => {
     const updatedArr = [...orderDetails1];
-    console.log("Index is ", index);
     updatedArr.splice(index, 1);
     dispatch(updateArr(updatedArr));
   };
-  // const o = useSelector((state) => state.order.orderArr);
-  console.log(orderDetails);
-  console.log("orderArr from Redux:", orderDetails1);
 
-  // console.log(o);
   if (!orderDetails) {
     return <div>No orders placed yet!</div>;
   }
@@ -40,20 +35,10 @@ function Orders() {
             <p onClick={() => handleDel(index)}>Delete</p>
           </div>
           <h4 style={{ marginLeft: 40 }}>
-            Total Price: {order.price ? order.price.toFixed(2) : "N/A"}
+            Total Price: {order.price ? order.price : "N/A"}
           </h4>
         </div>
       ))}
-      {/* <ul className="inUL">
-        <span>Ingredients: </span>
-        <li>Bacon: ({orderDetails.baconCount})</li>
-        <li>Meat: ({orderDetails.meatCount})</li>
-        <li>Salad: ({orderDetails.saladCount})</li>
-        <li>Cheese: ({orderDetails.cheeseCount})</li>
-      </ul>
-      <h4 style={{ marginLeft: 40 }}>
-        Total Price: {orderDetails.price.toFixed(2)}
-      </h4> */}
     </div>
   );
 }

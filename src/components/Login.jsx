@@ -1,10 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import {
-  loginSuccess,
-  loginFailure,
-  registerUser,
-} from "../features/auth/authSlice";
+import { loginSuccess, loginFailure } from "../features/auth/authSlice";
 import "./Login.css";
 
 function Login() {

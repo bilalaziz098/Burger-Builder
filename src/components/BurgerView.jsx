@@ -4,59 +4,66 @@ import "./BurgerView.css";
 import Ingredients from "./Ingredients";
 import Display from "./Display";
 import OrderButton from "./OrderButton";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  updateSaladDivs,
+  resetBurger,
+  addSalad,
+  lessSalad,
+  addBacon,
+  lessBacon,
+  addCheese,
+  lessCheese,
+  addMeat,
+  lessMeat,
+  updateBaconDivs,
+  updateCheeseDivs,
+  updateMeatDivs,
+} from "../features/order/orderSlice";
 
-// function BurgerView({
-//   setSaladDivs,
-//   setBaconDivs,
-//   setCheeseDivs,
-//   setMeatDivs,
-//   saladDivs,
-//   meatDivs,
-//   cheeseDivs,
-//   baconDivs,
-// }) {
 function BurgerView() {
-  const [price, setPrice] = useState(4.0);
-  const [saladCount, setSaladCount] = useState(0);
-  const [baconCount, setBaconCount] = useState(0);
-  const [cheeseCount, setCheeseCount] = useState(0);
-  const [meatCount, setMeatCount] = useState(0);
-  const [saladdisable, setSaladDisable] = useState(false);
-  const [cheesedisable, setCheeseDisable] = useState(false);
+  const [saladDisable, setSaladDisable] = useState(true);
+  const [cheeseDisable, setCheeseDisable] = useState(true);
+  const [meatDisable, setMeatDisable] = useState(true);
+  const [baconDisable, setBaconDisable] = useState(true);
 
-  const [bacondisable, setBaconDisable] = useState(false);
-  const [meatdisable, setMeatDisable] = useState(false);
-  const [saladDivs, setSaladDivs] = useState([]);
-  const [cheeseDivs, setCheeseDivs] = useState([]);
-  const [baconDivs, setBaconDivs] = useState([]);
-  const [meatDivs, setMeatDivs] = useState([]);
+  const dispatch = useDispatch();
 
-  const resetBurger = () => {
-    setSaladCount(0);
-    setBaconCount(0);
-    setCheeseCount(0);
-    setMeatCount(0);
-    setSaladDivs([]);
-    setBaconDivs([]);
-    setCheeseDivs([]);
-    setMeatDivs([]);
-    setPrice(4.0);
-    setSaladDisable(true);
-    setBaconDisable(true);
-    setCheeseDisable(true);
-    setMeatDisable(true);
+  const {
+    price,
+    saladDiv,
+    saladCount,
+    cheeseDiv,
+    cheeseCount,
+    baconDiv,
+    baconCount,
+    meatDiv,
+    meatCount,
+  } = useSelector((state) => state.order);
+
+  // const price = useSelector((state) => state.order.price);
+  // const saladDivIS = useSelector((state) => state.order.saladDiv);
+  // const saladCount = useSelector((state) => state.order.saladCount);
+  // const cheeseDivIS = useSelector((state) => state.order.cheeseDiv);
+  // const cheeseCount = useSelector((state) => state.order.cheeseCount);
+  // const baconDivIS = useSelector((state) => state.order.baconDiv);
+  // const baconCount = useSelector((state) => state.order.baconCount);
+  // const meatDivIS = useSelector((state) => state.order.meatDiv);
+  // const meatCount = useSelector((state) => state.order.meatCount);
+
+  const reset = () => {
+    dispatch(resetBurger());
   };
   const orderbtn = {
     saladCount,
+    meatCount,
     baconCount,
     cheeseCount,
-    meatCount,
     price,
-    resetBurger,
+    reset,
   };
 
   useEffect(() => {
-    console.log("in useeff saladCount is  ", saladCount);
     if (saladCount == 0) {
       setSaladDisable(true);
     } else {
@@ -64,24 +71,21 @@ function BurgerView() {
     }
   }, [saladCount]);
   useEffect(() => {
-    console.log("in useeff baconCount is  ", baconCount);
-    if (baconCount == 0) {
+    if (baconCount === 0) {
       setBaconDisable(true);
     } else {
       setBaconDisable(false);
     }
   }, [baconCount]);
   useEffect(() => {
-    console.log("in useeff cheeseCount is  ", cheeseCount);
-    if (cheeseCount == 0) {
+    if (cheeseCount === 0) {
       setCheeseDisable(true);
     } else {
       setCheeseDisable(false);
     }
   }, [cheeseCount]);
   useEffect(() => {
-    console.log("in useeff meatCount is  ", meatCount);
-    if (meatCount == 0) {
+    if (meatCount === 0) {
       setMeatDisable(true);
     } else {
       setMeatDisable(false);
@@ -89,105 +93,88 @@ function BurgerView() {
   }, [meatCount]);
 
   const handleMoreSalad = () => {
-    setPrice(price + 0.5);
-    setSaladCount(saladCount + 1);
-    console.log("saladCount is ", saladCount);
-    setSaladDivs([...saladDivs, <div className="salad" key={saladDivs}></div>]);
-    setSaladDisable(false);
+    dispatch(addSalad());
+    console.log(saladCount);
+    const neArr = [...saladDiv, {}];
+    dispatch(updateSaladDivs(neArr));
   };
+
   const handleLessSalad = () => {
-    console.log("less");
-    setSaladCount(saladCount - 1);
     if (saladCount > 0) {
-      console.log(saladDivs);
-      setSaladDivs((prev) => prev.slice(1));
-      setPrice(price - 0.5);
+      dispatch(lessSalad());
+      const updatedSaladDivs = saladDiv.slice(0, saladDiv.length - 1);
+      dispatch(updateSaladDivs(updatedSaladDivs));
     }
   };
   const handleMoreBacon = () => {
-    setPrice(price + 0.7);
-    setBaconCount(baconCount + 1);
-    console.log("baconCount is ", baconCount);
-    setBaconDivs([...baconDivs, <div key={baconDivs} className="bacon"></div>]);
-    setBaconDisable(false);
+    dispatch(addBacon());
+    const newBaconDivs = [...baconDiv, {}];
+    dispatch(updateBaconDivs(newBaconDivs));
   };
+
   const handleLessBacon = () => {
-    console.log("less");
-    setBaconCount(baconCount - 1);
     if (baconCount > 0) {
-      setBaconDivs((prev) => prev.slice(1));
-      setPrice(price - 0.7);
+      dispatch(lessBacon());
+      const updatedBaconDivs = baconDiv.slice(0, baconDiv.length - 1);
+      dispatch(updateBaconDivs(updatedBaconDivs));
     }
   };
   const handleMoreCheese = () => {
-    setPrice(price + 0.4);
-    setCheeseCount(cheeseCount + 1);
-    console.log("cheeseCount is ", cheeseCount);
-    setCheeseDivs([
-      ...cheeseDivs,
-      <div key={cheeseDivs} className="cheese"></div>,
-    ]);
-    setCheeseDisable(false);
+    dispatch(addCheese());
+    const neArr = [...cheeseDiv, {}];
+    dispatch(updateCheeseDivs(neArr));
   };
+
   const handleLessCheese = () => {
-    console.log("less");
-    setCheeseCount(cheeseCount - 1);
     if (cheeseCount > 0) {
-      setCheeseDivs((prev) => prev.slice(1));
-      setPrice(price - 0.4);
+      dispatch(lessCheese());
+      const updatedCheeseDivs = cheeseDiv.slice(0, cheeseDiv.length - 1);
+      dispatch(updateCheeseDivs(updatedCheeseDivs));
     }
   };
   const handleMoreMeat = () => {
-    setPrice(price + 1.3);
-    setMeatCount(meatCount + 1);
-    console.log("meatCount is ", meatCount);
-    setMeatDivs([...meatDivs, <div key={meatDivs} className="meat"></div>]);
-    setMeatDisable(false);
+    dispatch(addMeat());
+    const neArr = [...meatDiv, {}];
+    dispatch(updateMeatDivs(neArr));
   };
+
   const handleLessMeat = () => {
-    console.log("less");
-    setMeatCount(meatCount - 1);
     if (meatCount > 0) {
-      setMeatDivs((prev) => prev.slice(1));
-      setPrice(price - 1.3);
+      dispatch(lessMeat());
+      const updatedMeatDivs = meatDiv.slice(0, meatDiv.length - 1);
+      dispatch(updateMeatDivs(updatedMeatDivs));
     }
   };
 
   return (
     <div>
-      <Display
-        price={price}
-        baconDivs={baconDivs}
-        saladDivs={saladDivs}
-        meatDivs={meatDivs}
-        cheeseDivs={cheeseDivs}
-      />
+      <Display price={price} />
       <div className="orderDiv">
-        <p>Current price: {price.toFixed(2)}</p>
+        <p>Current price: {price}</p>
         <div className="btnDiv">
           <Ingredients
             name="Salad"
             increase={handleMoreSalad}
             decrease={handleLessSalad}
-            disable={saladdisable}
+            disable={saladDisable}
           />
           <Ingredients
             name="Bacon"
             increase={handleMoreBacon}
             decrease={handleLessBacon}
-            disable={bacondisable}
+            disable={baconDisable}
           />
           <Ingredients
             name="Cheese"
             increase={handleMoreCheese}
             decrease={handleLessCheese}
-            disable={cheesedisable}
+            disable={cheeseDisable}
           />
           <Ingredients
             name="Meat"
             increase={handleMoreMeat}
             decrease={handleLessMeat}
-            disable={meatdisable}
+            disable={meatDisable}
           />
         </div>
         <OrderButton btnprop={orderbtn} />
